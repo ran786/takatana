@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8月10日 釣り旅行 インタラクティブプラン</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Coastal Calm -->
+    <!-- Application Structure Plan: このアプリケーションは、旅行の計画を直感的に理解し、意思決定を促し、参加者間のコミュニケーションを支援するための「インタラクティブ・ダッシュボード」として設計されています。1.ヘッダーで旅行のテーマを提示し、2.タイムライン形式の旅程で一日の流れを視覚化します。3.最も重要な宿泊先の比較セクションでは、サイドバイサイドのカードレイアウトとインタラクティブな比較チャートを用いて、価格や収容人数といった定量的データを瞬時に把握できるようにしました。4.「持ち物」セクションでは、旅行に必要なアイテムをリストアップし、5.「みんなで決めよう」セクションで議論すべき点を明確に提示します。最後に、6.「掲示板」セクションを追加し、参加者間でメッセージを共有できるリアルタイムのコミュニケーション機能を提供します。この構造は、報告書の静的な構成から脱却し、ユーザーの理解、参加、そして協調を最大化するために選択されました。 -->
+    <!-- Visualization & Content Choices: 宿泊先候補の比較という中心的な目標を達成するため、Chart.jsを用いた横棒グラフを選択しました。これにより、価格と収容人数という2つの重要な指標を視覚的に直接比較でき、ユーザーはテキストを読むよりも迅速に差異を理解できます。タイムラインは、UnicodeアイコンとHTML/CSSで構築し、視覚的な楽しさと分かりやすさを提供します。「持ち物」セクションはシンプルなリスト形式で、視認性を重視しました。「掲示板」はFirestoreとJavaScriptを組み合わせて、リアルタイムのメッセージ表示と投稿を可能にし、ユーザー間のインタラクションを促進します。これらの選択は、インタラクティブ性を高め、情報をより消化しやすくするという設計思想に基づいています。NO SVG/Mermaidの制約を遵守し、全ての視覚要素はHTML/CSS/Canvasで実現しています。 -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            background-color: #f8f7f4;
+            color: #3a3a3a;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 350px;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #a8dadc, #f1faee);
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .btn-choice {
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .btn-choice:hover {
+            transform: scale(1.05);
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 1.25rem;
+            top: 1.25rem;
+            bottom: -1.25rem;
+            width: 2px;
+            background-color: #457b9d;
+            transform: translateX(-50%);
+        }
+        .timeline-item:last-child::before {
+            display: none;
+        }
+        .timeline-icon {
+            background-color: #457b9d;
+            color: white;
+        }
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #457b9d;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="gradient-bg text-center py-12 md:py-20">
+        <div class="container mx-auto px-4">
+            <h1 class="text-4xl md:text-5xl font-bold text-[#1d3557]">2025/8/10,11 夏の旅行プラン</h1>
+            <p class="mt-4 text-lg md:text-xl text-[#1d3557]">高棚のみんながやってきます。</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-12">
+        
+        <section id="itinerary" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-10 text-[#1d3557]">当日のスケジュール</h2>
+            <div class="max-w-3xl mx-auto">
+                <div class="relative pl-10">
+                    <div class="timeline-item relative pb-10">
+                        <div class="timeline-icon absolute left-0 top-0 h-10 w-10 rounded-full flex items-center justify-center text-xl transform -translate-x-1/2">🎣</div>
+                        <div class="ml-8">
+                            <h3 class="text-xl font-bold text-[#457b9d]">午前の部：釣り大会</h3>
+                            <p class="mt-2 text-gray-700">朝から船で釣り決行！大物を狙おう！</p>
+                            <div class="mt-4 p-4 bg-white/60 rounded-lg border border-gray-200">
+                                <p><strong>集合場所：</strong>🚗 高棚で車集合</p>
+                                <p><strong>時間：</strong>☀️ 早朝（詳細は後日相談）</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pb-10">
+                        <div class="timeline-icon absolute left-0 top-0 h-10 w-10 rounded-full flex items-center justify-center text-xl transform -translate-x-1/2">🏠</div>
+                        <div class="ml-8">
+                            <h3 class="text-xl font-bold text-[#457b9d]">夕方の部：お楽しみディナー＆宿泊</h3>
+                            <p class="mt-2 text-gray-700">宿泊先に移動して、釣った魚を美味しく料理！</p>
+                            <div class="mt-4 p-4 bg-white/60 rounded-lg border border-gray-200">
+                                <p>🍳 釣果を調理して、みんなで最高のディナーを楽しもう！</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="accommodation" class="mb-16">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-[#1d3557]">宿泊先決定！</h2>
+                <p class="mt-2 text-gray-600 max-w-2xl mx-auto">宿泊先は「候補2: BBQができる家」に決定しました！</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover opacity-50">
+                    <h3 class="text-2xl font-bold text-[#e63946]">候補1: オーシャンビューの家</h3>
+                    <p class="text-lg font-semibold text-[#1d3557] mt-2">1人 約7,000円</p>
+                    <ul class="mt-4 space-y-2 text-gray-700">
+                        <li>🌊 <strong>特徴:</strong> ベランダからのオーシャンビュー</li>
+                        <li>🏠 <strong>間取り:</strong> 5DK（2階建て貸切）</li>
+                        <li>🛌 <strong>定員:</strong> ベッド6台 + 布団3組</li>
+                        <li>🍳 <strong>設備:</strong> カセットコンロあり</li>
+                    </ul>
+                    <a href="https://www.airbnb.jp/rooms/1429487453149356603" target="_blank" class="block w-full text-center mt-6 bg-[#e63946] text-white font-bold py-2 px-4 rounded-lg btn-choice">詳細を見る</a>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover border-4 border-[#457b9d]">
+                    <h3 class="text-2xl font-bold text-[#457b9d]">決定！候補2: BBQができる家</h3>
+                    <p class="text-lg font-semibold text-[#1d3557] mt-2">1人 約6,000円</p>
+                    <ul class="mt-4 space-y-2 text-gray-700">
+                        <li>🔥 <strong>特徴:</strong> 裏庭のウッドデッキにBBQグリル</li>
+                        <li>🏠 <strong>間取り:</strong> 貸切一軒家</li>
+                        <li>🛌 <strong>定員:</strong> ベッド6台 + 布団4組</li>
+                        <li>🌳 <strong>その他:</strong> 駐車場付き</li>
+                    </ul>
+                    <a href="https://www.airbnb.jp/rooms/1309352596687236218" target="_blank" class="block w-full text-center mt-6 bg-[#457b9d] text-white font-bold py-2 px-4 rounded-lg btn-choice">詳細を見る</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="belongings" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-10 text-[#1d3557]">持ち物リスト</h2>
+            <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-6">
+                <p class="mb-4 text-gray-700">快適な旅行のために、忘れずに持ってきてほしいものをリストアップしました。</p>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>着替え（1泊2日分）</li>
+                    <li>洗面用具（歯ブラシ、シャンプーなど）</li>
+                    <li>タオル</li>
+                    <li>水着（もし海水浴をするなら）</li>
+                    <li>日焼け止め、帽子</li>
+                    <li>酔い止め薬（船酔いが心配な方）</li>
+                    <li>飲み物、お菓子</li>
+                    <li>充電器</li>
+                    <li>保険証のコピー</li>
+                    <li>その他、個人的に必要なもの</li>
+                </ul>
+                <p class="mt-4 text-gray-700">※釣具は船宿でレンタルできる可能性がありますが、ご自身のものを使いたい方はお持ちください。</p>
+            </div>
+        </section>
+
+        <section id="discussion" class="mb-16">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-[#1d3557]">みんなで決めよう！</h2>
+                <p class="mt-2 text-gray-600">この旅行を最高のものにするために、いくつか決めたいことがあります。</p>
+            </div>
+            <div class="grid grid-cols-1 gap-6 justify-items-center">
+                <div class="bg-white rounded-xl p-6 text-center shadow-lg card-hover max-w-md w-full">
+                    <div class="text-4xl mb-4">🗺️</div>
+                    <h3 class="text-xl font-bold">翌日のプランは？</h3>
+                    <p class="mt-2 text-gray-700">チェックアウト後、どう過ごすかアイデアを出し合おう。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="bulletin-board" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-10 text-[#1d3557]">掲示板</h2>
+            <p class="text-center mb-6 text-gray-600">旅行に関する連絡事項や質問、アイデアなどを自由に書き込んでください。</p>
+            <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-6">
+                <div class="mb-4">
+                    <p class="text-sm text-gray-500 mb-2">あなたの表示名: <span id="currentUserName" class="font-mono text-gray-700 break-all">匿名ユーザー</span></p>
+                </div>
+                <div class="mb-6">
+                    <textarea id="messageInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-[#457b9d] focus:border-[#457b9d] resize-y" rows="3" placeholder="メッセージを入力してください..."></textarea>
+                    <button id="postMessageBtn" class="mt-3 w-full bg-[#457b9d] text-white font-bold py-2 px-4 rounded-lg btn-choice flex items-center justify-center">
+                        <span id="postBtnText">投稿する</span>
+                        <div id="postLoadingSpinner" class="loading-spinner ml-2 hidden"></div>
+                    </button>
+                </div>
+                <div id="messagesContainer" class="space-y-4">
+                    <p class="text-center text-gray-500" id="loadingMessages">メッセージを読み込み中...</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <footer class="text-center py-8 mt-12 bg-gray-200">
+        <p class="text-gray-600">楽しい旅行にしよう！</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        let db;
+        let auth;
+        let currentUserId = '読み込み中...'; // Firestoreに保存するID
+        let currentUserNameDisplay = '匿名ユーザー'; // 画面に表示する名前
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+
+        const messageInput = document.getElementById('messageInput');
+        const postMessageBtn = document.getElementById('postMessageBtn');
+        const postBtnText = document.getElementById('postBtnText');
+        const postLoadingSpinner = document.getElementById('postLoadingSpinner');
+        const messagesContainer = document.getElementById('messagesContainer');
+        const loadingMessages = document.getElementById('loadingMessages');
+        const currentUserNameSpan = document.getElementById('currentUserName'); // ID表示から名前表示に変更
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        currentUserId = user.uid; // 認証済みユーザーのUIDを使用
+                    } else {
+                        try {
+                            if (typeof __initial_auth_token !== 'undefined') {
+                                await signInWithCustomToken(auth, __initial_auth_token);
+                                currentUserId = auth.currentUser.uid;
+                            } else {
+                                await signInAnonymously(auth);
+                                currentUserId = auth.currentUser.uid; // 匿名認証のUIDを使用
+                            }
+                        } catch (error) {
+                            console.error("Firebase Auth error:", error);
+                            currentUserId = crypto.randomUUID(); // 認証失敗時はランダムなIDを使用
+                        }
+                    }
+                    currentUserNameSpan.textContent = currentUserNameDisplay; // 表示名は常に「匿名ユーザー」
+                    setupRealtimeMessages();
+                });
+
+                postMessageBtn.addEventListener('click', async () => {
+                    const messageText = messageInput.value.trim();
+                    if (messageText === '') {
+                        console.log("メッセージが空です。");
+                        return;
+                    }
+
+                    postBtnText.classList.add('hidden');
+                    postLoadingSpinner.classList.remove('hidden');
+                    postMessageBtn.disabled = true;
+
+                    try {
+                        await addDoc(collection(db, `artifacts/${appId}/public/data/bulletinBoardMessages`), {
+                            userId: currentUserId, // 内部的にはUIDまたはランダムIDを保存
+                            userName: currentUserNameDisplay, // 表示名として「匿名ユーザー」を保存
+                            message: messageText,
+                            timestamp: serverTimestamp()
+                        });
+                        messageInput.value = '';
+                    } catch (e) {
+                        console.error("メッセージの投稿中にエラーが発生しました: ", e);
+                    } finally {
+                        postBtnText.classList.remove('hidden');
+                        postLoadingSpinner.classList.add('hidden');
+                        postMessageBtn.disabled = false;
+                    }
+                });
+
+            } catch (error) {
+                console.error("Firebaseの初期化中にエラーが発生しました:", error);
+                loadingMessages.textContent = "メッセージの読み込みに失敗しました。";
+            }
+        });
+
+        function setupRealtimeMessages() {
+            if (!db) {
+                console.error("Firestoreが初期化されていません。");
+                return;
+            }
+            const q = query(collection(db, `artifacts/${appId}/public/data/bulletinBoardMessages`), orderBy("timestamp", "desc"));
+            onSnapshot(q, (snapshot) => {
+                messagesContainer.innerHTML = '';
+                loadingMessages.classList.add('hidden');
+                if (snapshot.empty) {
+                    messagesContainer.innerHTML = '<p class="text-center text-gray-500">まだメッセージはありません。</p>';
+                } else {
+                    snapshot.forEach((doc) => {
+                        const messageData = doc.data();
+                        const messageElement = document.createElement('div');
+                        messageElement.className = 'bg-gray-100 p-3 rounded-lg border border-gray-200';
+                        const timestamp = messageData.timestamp ? new Date(messageData.timestamp.toDate()).toLocaleString('ja-JP') : '日付不明';
+                        messageElement.innerHTML = `
+                            <p class="text-sm font-semibold text-[#457b9d]">表示名: ${messageData.userName || '匿名ユーザー'}</p>
+                            <p class="text-gray-800 mt-1">${messageData.message}</p>
+                            <p class="text-xs text-gray-500 mt-2 text-right">${timestamp}</p>
+                        `;
+                        messagesContainer.appendChild(messageElement);
+                    });
+                }
+            }, (error) => {
+                console.error("メッセージのリアルタイム更新中にエラーが発生しました: ", error);
+                messagesContainer.innerHTML = '<p class="text-center text-red-500">メッセージの読み込み中にエラーが発生しました。</p>';
+            });
+        }
+    </script>
+</body>
+</html>
