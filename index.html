@@ -101,7 +101,7 @@
                     <div class="timeline-item relative pb-10">
                         <div class="timeline-icon absolute left-0 top-0 h-10 w-10 rounded-full flex items-center justify-center text-xl transform -translate-x-1/2">🏠</div>
                         <div class="ml-8">
-                            <h3 class="text-xl font-bold text-[#457b9d]">夕方の部：お楽しみディナー＆宿泊</h3>
+                            <h3 class="text-xl font-bold text-[#457b9d]">夕方の部：ディナー＆宿泊</h3>
                             <p class="mt-2 text-gray-700">宿泊先に移動して、釣った魚を美味しく料理！</p>
                             <div class="mt-4 p-4 bg-white/60 rounded-lg border border-gray-200">
                                 <p>🍳 釣果を調理して、みんなで最高のディナーを楽しもう！</p>
@@ -114,25 +114,14 @@
         
         <section id="accommodation" class="mb-16">
             <div class="text-center mb-10">
-                <h2 class="text-3xl font-bold text-[#1d3557]">宿泊先決定！</h2>
-                <p class="mt-2 text-gray-600 max-w-2xl mx-auto">宿泊先は「候補2: BBQができる家」に決定しました！</p>
+                <h2 class="text-3xl font-bold text-[#1d3557]">宿泊先情報</h2>
+                <p class="mt-2 text-gray-600 max-w-2xl mx-auto">宿泊先はBBQができる家に決定しました！</p>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-                <div class="bg-white rounded-xl shadow-lg p-6 card-hover opacity-50">
-                    <h3 class="text-2xl font-bold text-[#e63946]">候補1: オーシャンビューの家</h3>
-                    <p class="text-lg font-semibold text-[#1d3557] mt-2">1人 約7,000円</p>
-                    <ul class="mt-4 space-y-2 text-gray-700">
-                        <li>🌊 <strong>特徴:</strong> ベランダからのオーシャンビュー</li>
-                        <li>🏠 <strong>間取り:</strong> 5DK（2階建て貸切）</li>
-                        <li>🛌 <strong>定員:</strong> ベッド6台 + 布団3組</li>
-                        <li>🍳 <strong>設備:</strong> カセットコンロあり</li>
-                    </ul>
-                    <a href="https://www.airbnb.jp/rooms/1429487453149356603" target="_blank" class="block w-full text-center mt-6 bg-[#e63946] text-white font-bold py-2 px-4 rounded-lg btn-choice">詳細を見る</a>
-                </div>
-                
+            <div class="grid grid-cols-1 gap-8 items-start max-w-md mx-auto">
+                <!-- 決定した宿泊先のみを残し、中央に配置 -->
                 <div class="bg-white rounded-xl shadow-lg p-6 card-hover border-4 border-[#457b9d]">
-                    <h3 class="text-2xl font-bold text-[#457b9d]">決定！候補2: BBQができる家</h3>
+                    <h3 class="text-2xl font-bold text-[#457b9d]">決定！BBQができる家</h3>
                     <p class="text-lg font-semibold text-[#1d3557] mt-2">1人 約6,000円</p>
                     <ul class="mt-4 space-y-2 text-gray-700">
                         <li>🔥 <strong>特徴:</strong> 裏庭のウッドデッキにBBQグリル</li>
@@ -140,7 +129,7 @@
                         <li>🛌 <strong>定員:</strong> ベッド6台 + 布団4組</li>
                         <li>🌳 <strong>その他:</strong> 駐車場付き</li>
                     </ul>
-                    <a href="https://www.airbnb.jp/rooms/1309352596687236218" target="_blank" class="block w-full text-center mt-6 bg-[#457b9d] text-white font-bold py-2 px-4 rounded-lg btn-choice">詳細を見る</a>
+                    <a href="https://www.airbnb.jp/rooms/1309352596687236218?source_impression_id=p3_1751812062_P3nLQHfRghljeLwB" target="_blank" class="block w-full text-center mt-6 bg-[#457b9d] text-white font-bold py-2 px-4 rounded-lg btn-choice">詳細を見る</a>
                 </div>
             </div>
         </section>
@@ -179,156 +168,23 @@
             </div>
         </section>
 
-        <section id="bulletin-board" class="mb-16">
-            <h2 class="text-3xl font-bold text-center mb-10 text-[#1d3557]">掲示板</h2>
-            <p class="text-center mb-6 text-gray-600">旅行に関する連絡事項や質問、アイデアなどを自由に書き込んでください。</p>
-            <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-6">
-                <div class="mb-4">
-                    <p class="text-sm text-gray-500 mb-2">あなたの表示名: <span id="currentUserName" class="font-mono text-gray-700 break-all">読み込み中...</span></p>
-                </div>
-                <div class="mb-6">
-                    <textarea id="messageInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-[#457b9d] focus:border-[#457b9d] resize-y" rows="3" placeholder="メッセージを入力してください..."></textarea>
-                    <button id="postMessageBtn" class="mt-3 w-full bg-[#457b9d] text-white font-bold py-2 px-4 rounded-lg btn-choice flex items-center justify-center">
-                        <span id="postBtnText">投稿する</span>
-                        <div id="postLoadingSpinner" class="loading-spinner ml-2 hidden"></div>
-                    </button>
-                </div>
-                <div id="messagesContainer" class="space-y-4">
-                    <p class="text-center text-gray-500" id="loadingMessages">メッセージを読み込み中...</p>
-                </div>
+        <!-- 新しい関連リンクセクションを追加 -->
+        <section id="related-links" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-10 text-[#1d3557]">関連リンク</h2>
+            <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-6 text-center">
+                <p class="mb-4 text-gray-700">こちらにご意見ご要望お待ちしていまスンスン</p>
+                <a href="https://komugigungi.1my.jp/" target="_blank" class="inline-block bg-[#457b9d] text-white font-bold py-3 px-6 rounded-lg btn-choice text-lg">
+                    掲示板へジャンプ
+                </a>
             </div>
         </section>
 
     </main>
     
     <footer class="text-center py-8 mt-12 bg-gray-200">
-        <p class="text-gray-600">楽しい旅行にしよう！</p>
+        <p class="text-gray-600">にょほほほほほ</p>
     </footer>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        let db;
-        let auth;
-        let currentUserId = '読み込み中...'; // Firestoreに保存するID
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-
-        const messageInput = document.getElementById('messageInput');
-        const postMessageBtn = document.getElementById('postMessageBtn');
-        const postBtnText = document.getElementById('postBtnText');
-        const postLoadingSpinner = document.getElementById('postLoadingSpinner');
-        const messagesContainer = document.getElementById('messagesContainer');
-        const loadingMessages = document.getElementById('loadingMessages');
-        const currentUserNameSpan = document.getElementById('currentUserName');
-
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                const app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-
-                onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        currentUserId = user.uid; // 認証済みユーザーのUIDを使用
-                    } else {
-                        try {
-                            if (typeof __initial_auth_token !== 'undefined') {
-                                await signInWithCustomToken(auth, __initial_auth_token);
-                                currentUserId = auth.currentUser.uid;
-                            } else {
-                                await signInAnonymously(auth);
-                                currentUserId = auth.currentUser.uid; // 匿名認証のUIDを使用
-                            }
-                        } catch (error) {
-                            console.error("Firebase Auth error:", error);
-                            currentUserId = crypto.randomUUID(); // 認証失敗時はランダムなIDを使用
-                        }
-                    }
-                    currentUserNameSpan.textContent = currentUserId; // ユーザーIDを画面に表示
-                    setupRealtimeMessages();
-                });
-
-                postMessageBtn.addEventListener('click', async () => {
-                    const messageText = messageInput.value.trim();
-                    if (messageText === '') {
-                        console.log("メッセージが空です。");
-                        return;
-                    }
-
-                    postBtnText.classList.add('hidden');
-                    postLoadingSpinner.classList.remove('hidden');
-                    postMessageBtn.disabled = true;
-
-                    try {
-                        await addDoc(collection(db, `artifacts/${appId}/public/data/bulletinBoardMessages`), {
-                            userId: currentUserId, // 内部的にUIDまたはランダムIDを保存
-                            userName: currentUserId, // 表示名としてユーザーIDを保存
-                            message: messageText,
-                            timestamp: serverTimestamp()
-                        });
-                        messageInput.value = '';
-                    } catch (e) {
-                        console.error("メッセージの投稿中にエラーが発生しました: ", e);
-                    } finally {
-                        postBtnText.classList.remove('hidden');
-                        postLoadingSpinner.classList.add('hidden');
-                        postMessageBtn.disabled = false;
-                    }
-                });
-
-            } catch (error) {
-                console.error("Firebaseの初期化中にエラーが発生しました:", error);
-                loadingMessages.textContent = "メッセージの読み込みに失敗しました。";
-            }
-        });
-
-        function setupRealtimeMessages() {
-            if (!db) {
-                console.error("Firestoreが初期化されていません。");
-                return;
-            }
-            // orderByを削除し、JavaScriptでソート
-            const q = query(collection(db, `artifacts/${appId}/public/data/bulletinBoardMessages`));
-            onSnapshot(q, (snapshot) => {
-                messagesContainer.innerHTML = '';
-                loadingMessages.classList.add('hidden');
-                
-                if (snapshot.empty) {
-                    messagesContainer.innerHTML = '<p class="text-center text-gray-500">まだメッセージはありません。</p>';
-                } else {
-                    // スナップショットからデータを取得し、配列に格納
-                    const messages = [];
-                    snapshot.forEach((doc) => {
-                        messages.push({ id: doc.id, ...doc.data() });
-                    });
-
-                    // timestampで降順にソート
-                    messages.sort((a, b) => {
-                        if (!a.timestamp || !b.timestamp) return 0; // タイムスタンプがない場合はソートしない
-                        return b.timestamp.toDate().getTime() - a.timestamp.toDate().getTime();
-                    });
-
-                    // ソートされたメッセージを表示
-                    messages.forEach((messageData) => {
-                        const messageElement = document.createElement('div');
-                        messageElement.className = 'bg-gray-100 p-3 rounded-lg border border-gray-200';
-                        const timestamp = messageData.timestamp ? new Date(messageData.timestamp.toDate()).toLocaleString('ja-JP') : '日付不明';
-                        messageElement.innerHTML = `
-                            <p class="text-sm font-semibold text-[#457b9d]">表示名: ${messageData.userName || '匿名ユーザー'}</p>
-                            <p class="text-gray-800 mt-1">${messageData.message}</p>
-                            <p class="text-xs text-gray-500 mt-2 text-right">${timestamp}</p>
-                        `;
-                        messagesContainer.appendChild(messageElement);
-                    });
-                }
-            }, (error) => {
-                console.error("メッセージのリアルタイム更新中にエラーが発生しました: ", error);
-                messagesContainer.innerHTML = '<p class="text-center text-red-500">メッセージの読み込み中にエラーが発生しました。</p>';
-            });
-        }
-    </script>
+    <!-- Firebase関連のスクリプトは不要になったため削除 -->
 </body>
 </html>
