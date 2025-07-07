@@ -7,14 +7,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Coastal Calm -->
+    <!-- Chosen Palette: Coastal Calm (Updated for Summer Chill) -->
     <!-- Application Structure Plan: このアプリケーションは、旅行の計画を直感的に理解し、意思決定を促し、参加者間のコミュニケーションを支援するための「インタラクティブ・ダッシュボード」として設計されています。1.ヘッダーで旅行のテーマを提示し、2.タイムライン形式の旅程で一日の流れを視覚化します。3.最も重要な宿泊先の比較セクションでは、サイドバイサイドのカードレイアウトとインタラクティブな比較チャートを用いて、価格や収容人数といった定量的データを瞬時に把握できるようにしました。4.「持ち物」セクションでは、旅行に必要なアイテムをリストアップし、5.「みんなで決めよう」セクションで議論すべき点を明確に提示します。最後に、6.「掲示板」セクションを追加し、参加者間でメッセージを共有できるリアルタイムのコミュニケーション機能を提供します。この構造は、報告書の静的な構成から脱却し、ユーザーの理解、参加、そして協調を最大化するために選択されました。 -->
     <!-- Visualization & Content Choices: 宿泊先候補の比較という中心的な目標を達成するため、Chart.jsを用いた横棒グラフを選択しました。これにより、価格と収容人数という2つの重要な指標を視覚的に直接比較でき、ユーザーはテキストを読むよりも迅速に差異を理解できます。タイムラインは、UnicodeアイコンとHTML/CSSで構築し、視覚的な楽しさと分かりやすさを提供します。「持ち物」セクションはシンプルなリスト形式で、視認性を重視しました。「掲示板」はFirestoreとJavaScriptを組み合わせて、リアルタイムのメッセージ表示と投稿を可能にし、ユーザー間のインタラクションを促進します。これらの選択は、インタラクティブ性を高め、情報をより消化しやすくするという設計思想に基づいています。NO SVG/Mermaidの制約を遵守し、全ての視覚要素はHTML/CSS/Canvasで実現しています。 -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
             font-family: 'Inter', 'Noto Sans JP', sans-serif;
-            background-color: #f8f7f4;
+            background-color: #F0F8FF; /* AliceBlue - より明るくチルい背景 */
             color: #3a3a3a;
         }
         .chart-container {
@@ -27,7 +27,8 @@
             max-height: 350px;
         }
         .gradient-bg {
-            background: linear-gradient(135deg, #a8dadc, #f1faee);
+            /* 夏らしく、チルいグラデーション */
+            background: linear-gradient(135deg, #B0E0E6, #F0F8FF); /* PowderBlue to AliceBlue */
         }
         .card-hover {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -49,19 +50,19 @@
             top: 1.25rem;
             bottom: -1.25rem;
             width: 2px;
-            background-color: #457b9d;
+            background-color: #66CCB3; /* ソフトなティールグリーン */
             transform: translateX(-50%);
         }
         .timeline-item:last-child::before {
             display: none;
         }
         .timeline-icon {
-            background-color: #457b9d;
+            background-color: #66CCB3; /* ソフトなティールグリーン */
             color: white;
         }
         .loading-spinner {
             border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: #457b9d;
+            border-left-color: #66CCB3; /* ソフトなティールグリーン */
             border-radius: 50%;
             width: 24px;
             height: 24px;
@@ -69,6 +70,40 @@
         }
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+        /* Tier List specific styles */
+        .tier-card {
+            background-color: white;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-lg */
+            padding: 1.5rem; /* p-6 */
+            margin-bottom: 1.5rem; /* mb-6 */
+        }
+        .tier-heading {
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: 700; /* font-bold */
+            margin-bottom: 1rem; /* mb-4 */
+            display: flex;
+            align-items: center;
+        }
+        .tier-icon {
+            margin-right: 0.75rem; /* mr-3 */
+            font-size: 1.875rem; /* text-3xl */
+        }
+        .tier-list {
+            list-style: none; /* Remove default list bullets */
+            padding-left: 0;
+            margin-top: 0.5rem; /* mt-2 */
+            line-height: 1.75; /* leading-relaxed */
+        }
+        .tier-list li {
+            display: flex;
+            align-items: center;
+        }
+        .tier-list li::before {
+            content: '✅'; /* Checkmark icon */
+            margin-right: 0.5rem; /* mr-2 */
+            font-size: 1.125rem; /* text-lg */
         }
     </style>
 </head>
@@ -90,7 +125,7 @@
                     <div class="timeline-item relative pb-10">
                         <div class="timeline-icon absolute left-0 top-0 h-10 w-10 rounded-full flex items-center justify-center text-xl transform -translate-x-1/2">🎣</div>
                         <div class="ml-8">
-                            <h3 class="text-xl font-bold text-[#457b9d]">午前の部：釣り大会</h3>
+                            <h3 class="text-xl font-bold text-[#66CCB3]">午前の部：釣り大会</h3>
                             <p class="mt-2 text-gray-700">朝から船で釣り決行！大物を狙おう！</p>
                             <div class="mt-4 p-4 bg-white/60 rounded-lg border border-gray-200">
                                 <p><strong>集合場所：</strong>🚗 高棚で車集合</p>
@@ -101,7 +136,7 @@
                     <div class="timeline-item relative pb-10">
                         <div class="timeline-icon absolute left-0 top-0 h-10 w-10 rounded-full flex items-center justify-center text-xl transform -translate-x-1/2">🏠</div>
                         <div class="ml-8">
-                            <h3 class="text-xl font-bold text-[#457b9d]">夕方の部：ディナー＆宿泊</h3>
+                            <h3 class="text-xl font-bold text-[#66CCB3]">夕方の部：ディナー＆宿泊</h3>
                             <p class="mt-2 text-gray-700">宿泊先に移動して、釣った魚を美味しく料理！</p>
                             <div class="mt-4 p-4 bg-white/60 rounded-lg border border-gray-200">
                                 <p>🍳 釣果を調理して、みんなでディナーを楽しもう！</p>
@@ -120,8 +155,8 @@
             
             <div class="grid grid-cols-1 gap-8 items-start max-w-md mx-auto">
                 <!-- 決定した宿泊先のみを残し、中央に配置 -->
-                <div class="bg-white rounded-xl shadow-lg p-6 card-hover border-4 border-[#457b9d]">
-                    <h3 class="text-2xl font-bold text-[#457b9d]">決定！BBQができる家</h3>
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover border-4 border-[#66CCB3]">
+                    <h3 class="text-2xl font-bold text-[#66CCB3]">決定！BBQができる家</h3>
                     <p class="text-lg font-semibold text-[#1d3557] mt-2">1人 約6,000円</p>
                     <ul class="mt-4 space-y-2 text-gray-700">
                         <li>🔥 <strong>特徴:</strong> 裏庭のウッドデッキにBBQグリル</li>
@@ -129,28 +164,48 @@
                         <li>🛌 <strong>定員:</strong> ベッド6台 + 布団4組</li>
                         <li>🌳 <strong>その他:</strong> 駐車場付き</li>
                     </ul>
-                    <a href="https://www.airbnb.jp/rooms/1309352596687236218?source_impression_id=p3_1751812062_P3nLQHfRghljeLwB" target="_blank" class="block w-full text-center mt-6 bg-[#457b9d] text-white font-bold py-2 px-4 rounded-lg btn-choice">詳細を見る</a>
+                    <a href="https://www.airbnb.jp/rooms/1309352596687236218?source_impression_id=p3_1751812062_P3nLQHfRghljeLwB" target="_blank" class="block w-full text-center mt-6 bg-[#66CCB3] text-white font-bold py-2 px-4 rounded-lg btn-choice">詳細を見る</a>
                 </div>
             </div>
         </section>
 
-        <section id="belongings" class="mb-16">
-            <h2 class="text-3xl font-bold text-center mb-10 text-[#1d3557]">持ち物リスト</h2>
-            <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-6">
-                <p class="mb-4 text-gray-700">快適な旅行のために、忘れずに持ってきてほしいものをリストアップしました。</p>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
-                    <li>着替え（1泊2日分）</li>
-                    <li>洗面用具（歯ブラシ、シャンプーなど）</li>
-                    <li>タオル</li>
-                    <li>水着（もし海水浴をするなら）</li>
-                    <li>日焼け止め、帽子</li>
-                    <li>酔い止め薬（船酔いが心配な方）</li>
-                    <li>飲み物、お菓子</li>
-                    <li>充電器</li>
-                    <li>保険証のコピー</li>
-                    <li>その他、個人的に必要なもの</li>
-                </ul>
-                <p class="mt-4 text-gray-700">※釣具は船宿でレンタルできる可能性がありますが、ご自身のものを使いたい方はお持ちください。</p>
+        <!-- 持ち物リストをティア表に置き換え -->
+        <section id="belongings-tier" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-10 text-[#1d3557]">持ち物ティア表</h2>
+            <div class="max-w-3xl mx-auto">
+                <!-- 必須 (Essential) -->
+                <div class="tier-card border-l-4 border-[#FF7F50]"> <!-- Coral -->
+                    <h3 class="tier-heading text-[#FF7F50]"><span class="tier-icon">🚨</span>必須アイテム (S Tier)</h3>
+                    <p class="text-gray-700">これがないと旅行が始まりません！</p>
+                    <ul class="tier-list text-gray-700">
+                        <li>着替え</li>
+                        <li>財布</li>
+                        <li>タオル</li>
+                        <li>サングラス</li>
+                    </ul>
+                </div>
+
+                <!-- 推奨 (Recommended) -->
+                <div class="tier-card border-l-4 border-[#FFCC00]"> <!-- Bright Yellow -->
+                    <h3 class="tier-heading text-[#FFCC00]"><span class="tier-icon">👍</span>推奨アイテム (A Tier)</h3>
+                    <p class="text-gray-700">あると快適さが格段にアップします！</p>
+                    <ul class="tier-list text-gray-700">
+                        <li>水着</li>
+                        <li>日焼け止め</li>
+                        <li>酔い止め</li>
+                    </ul>
+                </div>
+
+                <!-- あると便利 (Nice to Have) -->
+                <div class="tier-card border-l-4 border-[#6A5ACD]"> <!-- SlateBlue -->
+                    <h3 class="tier-heading text-[#6A5ACD]"><span class="tier-icon">✨</span>あると便利なアイテム (B Tier)</h3>
+                    <p class="text-gray-700">さらに旅行を楽しむためのプラスα！</p>
+                    <ul class="tier-list text-gray-700">
+                        <li>お金</li>
+                        <li>釣り具</li>
+                        <li>てるてる坊主</li>
+                    </ul>
+                </div>
             </div>
         </section>
 
@@ -172,8 +227,8 @@
         <section id="related-links" class="mb-16">
             <h2 class="text-3xl font-bold text-center mb-10 text-[#1d3557]">関連リンク</h2>
             <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-6 text-center">
-                <p class="mb-4 text-gray-700">こちらにご意見ご要望お待ちしていまスンスン</p>
-                <a href="https://komugigungi.1my.jp/" target="_blank" class="inline-block bg-[#457b9d] text-white font-bold py-3 px-6 rounded-lg btn-choice text-lg">
+                <p class="mb-4 text-gray-700">こちらにご意見ご要望お待ちしていまス</p>
+                <a href="https://komugigungi.1my.jp/" target="_blank" class="inline-block bg-[#66CCB3] text-white font-bold py-3 px-6 rounded-lg btn-choice text-lg">
                     掲示板へジャンプ
                 </a>
             </div>
