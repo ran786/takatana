@@ -8,7 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Coastal Calm (Updated for Summer Chill) -->
-    <!-- Application Structure Plan: このアプリケーションは、旅行の計画を直感的に理解し、意思決定を促し、参加者間のコミュニケーションを支援するための「インタラクティブ・ダッシュボード」として設計されています。1.ヘッダーで旅行のテーマを提示し、2.タイムライン形式の旅程で一日の流れを視覚化します。3.最も重要な宿泊先の比較セクションでは、サイドバイサイドのカードレイアウトとインタラクティブな比較チャートを用いて、価格や収容人数といった定量的データを瞬時に把握できるようにしました。4.「持ち物」セクションでは、旅行に必要なアイテムをリストアップし、5.「みんなで決めよう」セクションで議論すべき点を明確に提示します。最後に、6.「掲示板」セクションを追加し、参加者間でメッセージを共有できるリアルタイムのコミュニケーション機能を提供します。この構造は、報告書の静的な構成から脱却し、ユーザーの理解、参加、そして協調を最大化するために選択されました。 -->
+    <!-- Application Structure Plan: このアプリケーションは、旅行の計画を直感的に理解し、意思決定を促し、参加者間のコミュニケーションを支援するための「インタラクティブ・ダッシュボード」として設計されています。1.ヘッダーで旅行のテーマを提示し、2.タイムライン形式の旅程を視覚化します。3.最も重要な宿泊先の比較セクションでは、サイドバイサイドのカードレイアウトとインタラクティブな比較チャートを用いて、価格や収容人数といった定量的データを瞬時に把握できるようにしました。4.「持ち物」セクションでは、旅行に必要なアイテムをリストアップし、5.「みんなで決めよう」セクションで議論すべき点を明確に提示します。最後に、6.「掲示板」セクションを追加し、参加者間でメッセージを共有できるリアルタイムのコミュニケーション機能を提供します。この構造は、報告書の静的な構成から脱却し、ユーザーの理解、参加、そして協調を最大化するために選択されました。 -->
     <!-- Visualization & Content Choices: 宿泊先候補の比較という中心的な目標を達成するため、Chart.jsを用いた横棒グラフを選択しました。これにより、価格と収容人数という2つの重要な指標を視覚的に直接比較でき、ユーザーはテキストを読むよりも迅速に差異を理解できます。タイムラインは、UnicodeアイコンとHTML/CSSで構築し、視覚的な楽しさと分かりやすさを提供します。「持ち物」セクションはシンプルなリスト形式で、視認性を重視しました。「掲示板」はFirestoreとJavaScriptを組み合わせて、リアルタイムのメッセージ表示と投稿を可能にし、ユーザー間のインタラクションを促進します。これらの選択は、インタラクティブ性を高め、情報をより消化しやすくするという設計思想に基づいています。NO SVG/Mermaidの制約を遵守し、全ての視覚要素はHTML/CSS/Canvasで実現しています。 -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
@@ -224,7 +224,8 @@
             </div>
         </section>
 
-        <section id="discussion" class="mb-16">
+        <!-- 「決めよう！」セクションを削除 -->
+        <!-- <section id="discussion" class="mb-16">
             <div class="text-center mb-10">
                 <h2 class="text-3xl font-bold text-[#1d3557]">決めよう！</h2>
                 <p class="mt-2 text-gray-600">いくつか決めたいことがあります。</p>
@@ -236,11 +237,11 @@
                     <p class="mt-2 text-gray-700">チェックアウト後、どう過ごすかい？なぜ笑うんだい？</p>
                 </div>
             </div>
-        </section>
+        </section> -->
 
         <!-- 新しい関連リンクセクションを追加 -->
         <section id="related-links" class="mb-16">
-            <h2 class="text-3xl font-bold text-center mb-10 text-[#1d3557]">関連リンク</h2>
+            <h2 class="text-3xl font-bold text-center mb-10 text-[#1d3557]">こちらもどうぞ</h2>
             <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-6 text-center">
                 <p class="mb-4 text-gray-700">こちらにご意見ご要望お待ちしていまス</p>
                 <a href="https://komugigungi.1my.jp/" target="_blank" class="inline-block bg-[#66CCB3] text-white font-bold py-3 px-6 rounded-lg btn-choice text-lg">
